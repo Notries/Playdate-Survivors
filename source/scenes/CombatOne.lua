@@ -1,23 +1,29 @@
 import '../CoreLibs/crank'
 import '../components/Player'
 import '../components/EnemySpawner'
+import '../components/ScoreTracker'
 
-BasicScene = {}
-class("BasicScene").extends(NobleScene)
-local scene = BasicScene
+CombatOne = {}
+class("CombatOne").extends(NobleScene)
+local scene = CombatOne
 scene.backgroundColor = Graphics.kColorWhite
 
 function scene:destroyEnemySpawner()
 	self.drawEnemySpawner = false
+	self.enemySpawnerSprite:remove()
 end
 
 function scene:destroyPlayer()
 	self.drawPlayer = false
 	self.playerSprite:remove()
+	Noble.transition(GameOver, nil, Noble.Transition.Spotlight, {
+		invert = true, xEnterStart = 50, yEnterStart = 50, xEnterEnd = self.playerSprite.playerX + self.playerSprite.playerSizeX / 2, yEnterEnd = self.playerSprite.playerY + self.playerSprite.playerSizeY / 2,
+	})
 end
 
 function scene:setValues()
 	-- Directory starts in /source
+	self.scoreTracker = ScoreTracker()
 	self.playerSprite = Player()
 	self.enemySpawnerSprite = EnemySpawner()
 	self.drawEnemySpawner = true
@@ -163,7 +169,6 @@ end
 
 function scene:update()
 	scene.super.update(self)
-	-- self:destroyEnemySpawner()
 	if self.drawPlayer then
 		self.playerSprite:update()
 	end
@@ -176,19 +181,9 @@ function scene:update()
 	self.ticks = self.ticks + 1
 	if self.ticks > 120 then
 		self.ticks = 0
-		print("PLAYER")
-		printTable(self.playerSprite:getCollideBounds())
-		printTable(self.playerSprite:getPosition())
-		print("ENEMY SPAWNER SPRITE")
-		printTable(self.enemySpawnerSprite:getCollideBounds())
-		printTable(self.enemySpawnerSprite:getPosition())
-		print("ALL ENEMIES")
-		for i = 1, #self.enemySpawnerSprite.enemies do
-			printTable(self.enemySpawnerSprite.enemies[i]:getCollideBounds())
-			printTable(self.enemySpawnerSprite.enemies[i]:getPosition())
-		end
 	end
 	
+	self.scoreTracker:update()
 	self:handleCollisions()
 end
 
@@ -204,6 +199,10 @@ function scene:handleCollisions()
 			-- EnemySpawner and bullet are both destroyed.
 			firstSprite.collided = true
 			secondSprite.collided = true
+			Noble.GameData.set(
+				"Score",
+				Noble.GameData.get("Score") + 1
+			)
 		elseif((ft == "Enemy" and st == "Player") or (ft == "Player" and st == "Enemy")) then
 			-- Destroy the player
 			-- TODO trigger a game over

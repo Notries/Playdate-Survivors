@@ -3,7 +3,7 @@
 -- Do not copy this file as a template for your scenes. Instead, your scenes will extend this class.
 -- See <a href="../examples/SceneTemplate.lua.html">templates/SceneTemplate.lua</a> for a blank scene that you can copy and modify for your own scenes.
 -- If you are using <a href="http://github.com/NobleRobot/NobleEngine-ProjectTemplate">NobleEngine-ProjectTemplate</a>,
--- see `scenes/ExampleScene.lua` for an implementation example.
+-- see `scenes/GameOver.lua` for an implementation example.
 -- @usage
 --	YourSceneName = {}
 --	class("YourSceneName").extends(NobleScene)

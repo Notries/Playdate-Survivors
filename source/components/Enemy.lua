@@ -25,7 +25,7 @@ function Enemy:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY)
     self.enemySizeY = self.getEnemySizeY()
     self.enemyX = __x
     self.enemyY = __y
-    self.enemyVelocity = 1
+    self.enemyVelocity = 0.3
     self.enemyVelocityX = 0
     self.enemyVelocityY = 5
     self.spawnerX = __enemySpawnerX

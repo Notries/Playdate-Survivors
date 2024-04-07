@@ -34,7 +34,7 @@ function Player:setValues()
 	-- gun variables
     self.tick = 0
 	---- fireRate: smaller is faster
-	self.fireRate = 60
+	self.fireRate = 40
     self.bullets = {}
 	-- direction indicator variables
 	self.directionIndicator = DirectionIndicator()
