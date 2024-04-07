@@ -83,15 +83,9 @@ function Noble.Animation.new(__view)
 	--- This animation's spritesheet. You can replace this with another `playdate.graphics.imagetable` object, but generally you would not want to.
 	-- @see new
 	if (type(__view) == "userdata") then
-		print("SETTING IMAGE TABLE -- if")
 		animation.imageTable = __view
 	else
-		print("SETTING IMAGE TABLE -- else")
-		print("__view")
-		print(__view)
 		animation.imageTable = Graphics.imagetable.new(__view)
-		print(animation.imageTable)
-		printTable(animation.imageTable)
 	end
 	-- The current count of frame durations. This is used to determine when to advance to the next frame.
 	animation.frameDurationCount = 1

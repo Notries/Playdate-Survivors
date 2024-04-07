@@ -1,14 +1,28 @@
 import '../CoreLibs/crank'
 import '../components/Player'
+import '../components/EnemySpawner'
 
 BasicScene = {}
 class("BasicScene").extends(NobleScene)
 local scene = BasicScene
 scene.backgroundColor = Graphics.kColorWhite
 
+function scene:destroyEnemySpawner()
+	self.drawEnemySpawner = false
+end
+
+function scene:destroyPlayer()
+	self.drawPlayer = false
+	self.playerSprite:remove()
+end
+
 function scene:setValues()
 	-- Directory starts in /source
 	self.playerSprite = Player()
+	self.enemySpawnerSprite = EnemySpawner()
+	self.drawEnemySpawner = true
+	self.drawPlayer = true
+	self.ticks = 0
 end
 
 function scene:init()
@@ -108,7 +122,7 @@ function scene:init()
 		end,
 		downButtonHold = function()
 			-- Your code here
-			self.playerSprite:goPlayer()
+			self.playerSprite:stopPlayer()
 		end,
 		downButtonUp = function()
 			-- Your code here
@@ -138,6 +152,9 @@ function scene:enter()
 	scene.super.enter(self)
 	self.playerSprite:add(self.playerX,self.playerY)
 	self.playerSprite:play()
+
+	self.enemySpawnerSprite:add(-20, -20)
+	self.enemySpawnerSprite:play()
 end
 
 function scene:start()
@@ -146,7 +163,53 @@ end
 
 function scene:update()
 	scene.super.update(self)
-	self.playerSprite:update()
+	-- self:destroyEnemySpawner()
+	if self.drawPlayer then
+		self.playerSprite:update()
+	end
+
+	if self.drawEnemySpawner then
+		self.enemySpawnerSprite:updatePlayerSprite(self.playerSprite)
+		self.enemySpawnerSprite:update()
+	end
+
+	self.ticks = self.ticks + 1
+	if self.ticks > 120 then
+		self.ticks = 0
+		print("PLAYER")
+		printTable(self.playerSprite:getCollideBounds())
+		printTable(self.playerSprite:getPosition())
+		print("ENEMY SPAWNER SPRITE")
+		printTable(self.enemySpawnerSprite:getCollideBounds())
+		printTable(self.enemySpawnerSprite:getPosition())
+		print("ALL ENEMIES")
+		for i = 1, #self.enemySpawnerSprite.enemies do
+			printTable(self.enemySpawnerSprite.enemies[i]:getCollideBounds())
+			printTable(self.enemySpawnerSprite.enemies[i]:getPosition())
+		end
+	end
+	
+	self:handleCollisions()
+end
+
+function scene:handleCollisions()
+	local collisions = NobleSprite.allOverlappingSprites()
+	for i = 1, #collisions do
+		local collisionPair = collisions[i]
+		local firstSprite = collisionPair[1]
+		local secondSprite = collisionPair[2]
+		local ft = firstSprite.type
+		local st = secondSprite.type
+		if ((ft == "Enemy" and st == "Bullet") or (ft == "Bullet" and st == "Enemy")) then
+			-- EnemySpawner and bullet are both destroyed.
+			firstSprite.collided = true
+			secondSprite.collided = true
+		elseif((ft == "Enemy" and st == "Player") or (ft == "Player" and st == "Enemy")) then
+			-- Destroy the player
+			-- TODO trigger a game over
+			self:destroyPlayer()
+		end
+	end
 end
 
 function scene:drawBackground()
