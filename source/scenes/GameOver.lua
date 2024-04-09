@@ -8,20 +8,17 @@ function scene:setValues()
 
 	self.backgroundColor = self.color1
 
-	self.menu = nil
-	self.sequence = nil
+	self.scoreDisplayX = 200
+	self.scoreDisplayY = -20
+	self.scoreDisplayW = 190
+	self.scoreDisplayH = 130
+	self.score = Noble.GameData.get("Score")
 
 	self.menuX = 15
 
 	self.menuYFrom = -50
 	self.menuY = 15
 	self.menuYTo = 240
-
-	self.scoreDisplayX = 220
-	self.scoreDisplayY = -20
-	self.scoreDisplayW = 170
-	self.scoreDisplayH = 130
-	self.score = Noble.GameData.get("Score")
 end
 
 function scene:init()
@@ -44,25 +41,34 @@ function scene:init()
 	local crankTick = 0
 
 	self.inputHandler = {
+		AButtonDown = function()
+			self.menu:click()
+		end,
+		BButtonDown = function()
+			self.menu:click()
+		end,
+		leftButtonDown = function()
+			self.menu:click()
+		end,
+		rightButtonDown = function()
+			self.menu:click()
+		end,
 		upButtonDown = function()
-			self.menu:selectPrevious()
+			self.menu:click()
 		end,
 		downButtonDown = function()
-			self.menu:selectNext()
+			self.menu:click()
 		end,
 		cranked = function(change, acceleratedChange)
 			crankTick = crankTick + change
-			if (crankTick > 30) then
+			if (crankTick > 60) then
 				crankTick = 0
 				self.menu:selectNext()
-			elseif (crankTick < -30) then
+			elseif (crankTick < -60) then
 				crankTick = 0
 				self.menu:selectPrevious()
 			end
 		end,
-		AButtonDown = function()
-			self.menu:click()
-		end
 	}
 end
 
@@ -108,6 +114,7 @@ function scene:setupMenu(__menu)
 	__menu:addItem("Restart?",				function()
 		Noble.transition(CombatOne, nil, Noble.Transition.DipToBlack)
 		Noble.GameData.reset("Score")
+		-- Noble.GameData.reset("Upgrades")
 	end)
 	-- __menu:addItem(Noble.Transition.DipToWhite.name,				function() Noble.transition(GameOver2, nil, Noble.Transition.DipToWhite) end)
 	-- __menu:addItem(Noble.Transition.Imagetable.name.." (Bolt)",		function() Noble.transition(GameOver2, nil, Noble.Transition.Imagetable) end)

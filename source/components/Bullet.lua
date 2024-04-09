@@ -13,13 +13,13 @@ function Bullet:setValues(__x, __y, __velocityX, __velocityY, __arrayIndex)
     self.animation:addState("bullet", 1, 1)
 	self.animation:setState("bullet")
     -- bullet variables
-    self.bulletSpeed = 3.5
+    self.bulletVelocity = 3.5
     self.bulletSizeX = 13
     self.bulletSizeY = 13
     self.bulletX = __x
     self.bulletY= __y
-	self.bulletVelocityX = __velocityX * self.bulletSpeed
-    self.bulletVelocityY = __velocityY * self.bulletSpeed
+	self.bulletVelocityX = __velocityX * self.bulletVelocity
+    self.bulletVelocityY = __velocityY * self.bulletVelocity
     -- player variables
     self.playerX = __x
     self.playerY = __y
@@ -27,6 +27,8 @@ function Bullet:setValues(__x, __y, __velocityX, __velocityY, __arrayIndex)
     -- collision
     self:setCollideRect(0, 0, self.bulletSizeX, self.bulletSizeY)
     self.collided = false
+    -- upgrade menu variables
+    self.upgradeMenuOpened = false
 end
 
 function Bullet:init(__x, __y, __velocityX, __velocityY, __arrayIndex)
@@ -35,13 +37,18 @@ function Bullet:init(__x, __y, __velocityX, __velocityY, __arrayIndex)
 end
 
 function Bullet:update()
-    -- moves the bullet. If the bullet is off screen, remove it from the scene. (The remove statement is maybe not necessary)
-    self.bulletX = self.bulletX + self.bulletVelocityX
-    self.bulletY = self.bulletY + self.bulletVelocityY
+    if not(self.upgradeMenuOpened) then
+        -- moves the bullet. If the bullet is off screen, remove it from the scene. (The remove statement is maybe not necessary)
+        self.bulletX = self.bulletX + self.bulletVelocityX
+        self.bulletY = self.bulletY + self.bulletVelocityY
+    end
+
     if (self:shouldRemove()) then
 		self:remove()
 	else
-        self:moveTo(self.bulletX, self.bulletY)
+        if not(self.upgradeMenuOpened) then
+            self:moveTo(self.bulletX, self.bulletY)
+        end
         self:draw(self.bulletX, self.bulletY, false)
         -- collide! (reconverting back to global coordinates)
         self:setCollideRect(0, 0, self.bulletSizeX, self.bulletSizeY)

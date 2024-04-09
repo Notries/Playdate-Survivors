@@ -2,6 +2,8 @@ import '../CoreLibs/crank'
 import '../components/Player'
 import '../components/EnemySpawner'
 import '../components/ScoreTracker'
+import '../components/Upgrade'
+import '../components/UpgradeMenu'
 
 CombatOne = {}
 class("CombatOne").extends(NobleScene)
@@ -26,6 +28,9 @@ function scene:setValues()
 	self.scoreTracker = ScoreTracker()
 	self.playerSprite = Player()
 	self.enemySpawnerSprite = EnemySpawner()
+	-- Upgrade Menu
+	self.upgradeMenuSprite = UpgradeMenu(self)
+
 	self.drawEnemySpawner = true
 	self.drawPlayer = true
 	self.ticks = 0
@@ -42,6 +47,7 @@ function scene:init()
 		AButtonDown = function()			-- Runs once when button is pressed.
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		AButtonHold = function()			-- Runs every frame while the player is holding button down.
 			-- Your code here
@@ -61,6 +67,7 @@ function scene:init()
 		BButtonDown = function()
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		BButtonHeld = function()
 			-- Your code here
@@ -80,6 +87,7 @@ function scene:init()
 		leftButtonDown = function()
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		leftButtonHold = function()
 			-- Your code here
@@ -95,6 +103,7 @@ function scene:init()
 		rightButtonDown = function()
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		rightButtonHold = function()
 			-- Your code here
@@ -110,6 +119,7 @@ function scene:init()
 		upButtonDown = function()
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		upButtonHold = function()
 			-- Your code here
@@ -125,6 +135,7 @@ function scene:init()
 		downButtonDown = function()
 			-- Your code here
 			self.playerSprite:stopPlayer()
+			self.upgradeMenuSprite.menu:click()
 		end,
 		downButtonHold = function()
 			-- Your code here
@@ -139,10 +150,16 @@ function scene:init()
 		--
 		cranked = function(change, acceleratedChange)	-- Runs when the crank is rotated. See Playdate SDK documentation for details.
 			crankTick = crankTick + change
-			if (crankTick > 30) then
+			if (crankTick > 60) then
 				crankTick = 0
-			elseif (crankTick < -30) then
+				if self.upgradeMenuSprite.menu.currentItemNumber < 3 then
+					self.upgradeMenuSprite.menu:selectNext()
+				end
+			elseif (crankTick < -60) then
 				crankTick = 0
+				if self.upgradeMenuSprite.menu.currentItemNumber > 1 then
+					self.upgradeMenuSprite.menu:selectPrevious()
+				end
 			end
 		end,
 		crankDocked = function()						-- Runs once when when crank is docked.
@@ -161,6 +178,10 @@ function scene:enter()
 
 	self.enemySpawnerSprite:add(-20, -20)
 	self.enemySpawnerSprite:play()
+
+	-- Upgrade Menu
+	self.upgradeMenuSprite:add(-20, -20)
+	self.upgradeMenuSprite:play()
 end
 
 function scene:start()
@@ -169,6 +190,7 @@ end
 
 function scene:update()
 	scene.super.update(self)
+	
 	if self.drawPlayer then
 		self.playerSprite:update()
 	end
@@ -185,6 +207,9 @@ function scene:update()
 	
 	self.scoreTracker:update()
 	self:handleCollisions()
+
+	-- Upgrade Menu
+	self.upgradeMenuSprite:update()
 end
 
 function scene:handleCollisions()
@@ -205,10 +230,31 @@ function scene:handleCollisions()
 			)
 		elseif((ft == "Enemy" and st == "Player") or (ft == "Player" and st == "Enemy")) then
 			-- Destroy the player
-			-- TODO trigger a game over
 			self:destroyPlayer()
+		elseif((ft == "Upgrade" and st == "Player") or (ft == "Player" and st == "Upgrade")) then
+			-- Upgrade is collected (upgrade menu is opened and upgrade is removed)
+			self:openUpgradeMenu()
+			if ft == "Upgrade" then
+				firstSprite.collected = true
+			else
+				secondSprite.collected = true
+			end
 		end
 	end
+end
+
+function scene:openUpgradeMenu()
+	self.upgradeMenuSprite:start()
+	self.upgradeMenuSprite.active = true
+	self.playerSprite.upgradeMenuOpened = true
+	self.enemySpawnerSprite.upgradeMenuOpened = true
+end
+
+function scene:closeUpgradeMenu()
+	self.upgradeMenuSprite:close()
+	self.upgradeMenuSprite.active = false
+	self.playerSprite.upgradeMenuOpened = false
+	self.enemySpawnerSprite.upgradeMenuOpened = false
 end
 
 function scene:drawBackground()
@@ -217,6 +263,7 @@ end
 
 function scene:exit()
 	scene.super.exit(self)
+	self.upgradeMenuSprite:exit()
 end
 
 -- This runs once a transition to another scene completes.

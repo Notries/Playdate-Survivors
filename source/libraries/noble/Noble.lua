@@ -235,6 +235,9 @@ function Noble.transitionMidpointHandler()
 	end
 	currentScene = queuedScene			-- New scene's update loop begins.
 	queuedScene = nil
+	if (currentScene == nil) then
+		currentScene = GameOver()
+	end
 	currentScene:enter()				-- The new scene runs its "hello" code.
 end
 

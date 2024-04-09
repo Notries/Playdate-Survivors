@@ -10,14 +10,19 @@ function Enemy.getEnemySizeY()
 end
 
 function Enemy:isDead()
-    return self.collided
+    if self.collided then
+        self.collided = false
+        self.health = self.health - 1
+    end
+    return self.health <= 0
 end
 
-function Enemy:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY)
+function Enemy:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY, __enemySpeedIncrease, __health)
     -- identifier
 	self.type = 'Enemy'
     -- enemy animation
-    self.animation:addState("walk", 1, 3, nil, nil, nil, 2)
+    self.animation:addState("idle", 1, 1)
+    self.animation:addState("walk", 1, 3, nil, nil, nil, 3)
 	self.animation:setState("walk")
     --- enemy variables
     self.tick = 0
@@ -25,19 +30,22 @@ function Enemy:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY)
     self.enemySizeY = self.getEnemySizeY()
     self.enemyX = __x
     self.enemyY = __y
-    self.enemyVelocity = 0.3
+    self.enemyVelocity = 0.15 + __enemySpeedIncrease
     self.enemyVelocityX = 0
     self.enemyVelocityY = 5
     self.spawnerX = __enemySpawnerX
     self.spawnerY = __enemySpawnerY
+    self.health = __health
     -- collision
     self:setCollideRect(0, 0, self.enemySizeX, self.enemySizeY)
     self.collided = false
+    -- upgrade menu variables
+    self.upgradeMenuOpened = false
 end
 
-function Enemy:init(__x, __y, __enemySpawnerX, __enemySpawnerY)
+function Enemy:init(__x, __y, __enemySpawnerX, __enemySpawnerY, __enemySpeedIncrease, __health)
 	Enemy.super.init(self, "assets/images/player", true)
-    self:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY)
+    self:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY, __enemySpeedIncrease, __health)
 end
 
 function Enemy:followPlayer(playerSprite)
@@ -61,15 +69,33 @@ function Enemy:followPlayer(playerSprite)
 end
 
 function Enemy:update()
-    self.enemyX = self.enemyX + self.enemyVelocityX
-    self.enemyY = self.enemyY + self.enemyVelocityY
+    if not(self.upgradeMenuOpened) then
+        self.enemyX = self.enemyX + self.enemyVelocityX
+        self.enemyY = self.enemyY + self.enemyVelocityY 
+    end
 
     if (self:isDead()) then
         self:remove()
     else
-        -- draw!
-        self:moveTo(self.enemyX, self.enemyY)
-        self:draw(self.enemyX, self.enemyY, false)
+        if not(self.upgradeMenuOpened) then
+            if (self.animation.current.name == "idle") then
+                self.animation:setState("walk")
+            end
+            -- move!
+            self:moveTo(self.enemyX, self.enemyY)
+        else
+            self.animation:setState("idle")
+        end
+
+        if (self.health == 2) then
+            Graphics.setImageDrawMode(Graphics.kDrawModeFillBlack)
+            -- draw!
+            self:draw(self.enemyX, self.enemyY, false)
+            Graphics.setImageDrawMode(Graphics.kDrawModeCopy)
+        else
+            self:draw(self.enemyX, self.enemyY, false)
+        end
+
         -- collide!
         self:setCollideRect(0, 0, self.enemySizeX, self.enemySizeY)
     end
