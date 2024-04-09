@@ -1,3 +1,6 @@
+-- MAIN
+-- this runs the game
+
 import 'libraries/noble/Noble'
 
 import 'utilities/Utilities'

@@ -1,3 +1,9 @@
+-- BULLET:
+-- the parent class for other weapons,
+--- and is also the basic weapon the player starts with.
+-- handles the physics and animation of the weapon.
+-- Updated by Player.lua
+
 Bullet = {}
 class("Bullet").extends(NobleSprite)
 

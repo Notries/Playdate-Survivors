@@ -1,3 +1,7 @@
+-- ENEMY SPAWNER
+-- Handles the creation, updating, and deaths of enemies and upgrade objects
+-- Updated by scene
+
 import 'Enemy'
 import 'Upgrade'
 

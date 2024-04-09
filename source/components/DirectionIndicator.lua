@@ -1,3 +1,9 @@
+-- DIRECTION INDICATOR
+-- Handles the animation for the ball which is drawn
+---- around the player to indicate which direction the
+---- crank is currently pointing.
+-- Updated by Player.lua
+
 DirectionIndicator = {}
 class("DirectionIndicator").extends(NobleSprite)
 

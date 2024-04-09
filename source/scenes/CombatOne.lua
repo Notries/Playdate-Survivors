@@ -1,8 +1,13 @@
+-- COMBAT ONE
+-- SCENE: enters at start of game and on restart from Game Over
+-- Holds the input handler
+-- Handles updates for Player, EnemeySpawner, ScoreTracker, and UpgradeMenu
+-- Handles all collisions
+
 import '../CoreLibs/crank'
 import '../components/Player'
 import '../components/EnemySpawner'
 import '../components/ScoreTracker'
-import '../components/Upgrade'
 import '../components/UpgradeMenu'
 
 CombatOne = {}

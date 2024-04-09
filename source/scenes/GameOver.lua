@@ -1,3 +1,6 @@
+-- GAME OVER
+-- SCENE: enters when the player dies
+
 GameOver = {}
 class("GameOver").extends(NobleScene)
 local scene = GameOver

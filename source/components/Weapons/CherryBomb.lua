@@ -1,3 +1,8 @@
+-- CHERRY BOMB:
+-- child of "Bullet"
+-- handles physics and drawing of cherry bomb weapon
+-- Updated by Player.lua
+
 import "Bullet"
 
 CherryBomb = {}

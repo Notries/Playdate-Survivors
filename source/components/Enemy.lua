@@ -1,3 +1,7 @@
+-- ENEMY
+-- Handles the physics and animation of enemies.
+-- Updated by EnemySpawner.lua
+
 Enemy = {}
 class("Enemy").extends(NobleSprite)
 

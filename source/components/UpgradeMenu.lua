@@ -1,3 +1,11 @@
+-- UPGRADE MENU
+-- Handles the menu that appears when you collect an upgrade
+-- Holds the table with all upgrade options and their effects
+-- NOTE: since the scene holds the input manager and the collision menu,
+---- the scene is the one that calls the functions
+---- which move the menu selector and close/open this menu.
+-- Updated by scene
+
 UpgradeMenu = {}
 class("UpgradeMenu").extends(NobleSprite)
 
@@ -66,10 +74,24 @@ function UpgradeMenu:setValues(scene)
         },
         {
             title = "Cherry Bomb",
-            description = "Fires two\ncherries that\nfall to either\nside.",
+            description = "Fire two\ncherries that\nfall to either\nside.",
             effect = function()
                 self.scene.playerSprite.cherryBombEnabled = true
+                self.scene.playerSprite.cherryBombTick = self.scene.playerSprite.cherryBombThreshold - 1
+                self.scene.playerSprite.tick = self.scene.playerSprite.fireRate
                 table.remove(self.upgradeTable, 4)
+                self.scene:closeUpgradeMenu()
+            end,
+            disabled = false
+        },
+        {
+            title = "Mushroom Guardians",
+            description = "Gain two\nmushroom\nguardians that\nregenerate\nafter some\ntime.",
+            effect = function()
+                self.scene.playerSprite.mushroomGuardianEnabled = true
+                self.scene.playerSprite.mushroomsToRespawn = self.scene.playerSprite.mushroomsToRespawn + 2
+                self.scene.playerSprite.mushroomGuardianTick = self.scene.playerSprite.mushroomGuardianThreshold - 1
+                self.scene.playerSprite.tick = self.scene.playerSprite.fireRate
                 self.scene:closeUpgradeMenu()
             end,
             disabled = false

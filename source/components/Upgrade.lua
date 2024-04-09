@@ -1,3 +1,10 @@
+-- UPGRADE
+-- This handles the animation of the upgrade object
+---- that drops from enemies (not the actual upgrading of the player)
+-- If you want to edit the dropping of upgrades, go to EnemySpawner.lua
+-- If you want to change the upgrade options, go to UpgradeMenu.lua
+-- Updated by EnemySpawner.lua
+
 Upgrade = {}
 class("Upgrade").extends(NobleSprite)
 

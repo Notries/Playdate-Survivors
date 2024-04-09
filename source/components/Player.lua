@@ -1,6 +1,12 @@
-import 'Bullet'
+-- PLAYER:
+-- handles player movement, crank aiming
+-- handles creation, updating, and destruction of bullets/weapons and direction indicator
+-- Updated by scene
+
+import "Weapons/Bullet"
 import "DirectionIndicator"
-import "CherryBomb"
+import "Weapons/CherryBomb"
+import "Weapons/MushroomGuardian"
 
 Player = {}
 class("Player").extends(NobleSprite)
@@ -32,15 +38,21 @@ function Player:setValues()
 	self.playerVelocityY = -0.5
 	-- collision
 	self:setCollideRect(0, 0, self.playerSizeX, self.playerSizeY)
-	-- gun variables
+	-- general weapon variables
     self.tick = 0
-	self.subtick = 0
 	self.bulletSpeedModifier = 1
-	-- cherryBomb variables
-	self.cherryBombEnabled = false
-	---- fireRate: smaller is faster
+	---- NOTE: smaller is faster
 	self.fireRate = 100
     self.bullets = {}
+	-- cherryBomb variables
+	self.cherryBombEnabled = false
+	self.cherryBombTick = 0
+	self.cherryBombThreshold = 3
+	-- mushroomGuardian variables
+	self.mushroomGuardianEnabled = false
+	self.mushroomGuardianTick = 0
+	self.mushroomGuardianThreshold = 4
+	self.mushroomsToRespawn = 0
 	-- direction indicator variables
 	self.directionIndicator = DirectionIndicator()
 	-- upgrade menu variables
@@ -58,8 +70,9 @@ function Player:update()
 	if not(self.upgradeMenuOpened) then
 		-- advance the gun clock, and fire a bullet if it's time.
 		self.tick = self.tick + 1
-		if (self.tick > self.fireRate) then
-			self.subtick = self.subtick + 1
+		if (self.tick >= self.fireRate) then
+			self.cherryBombTick = self.cherryBombTick + 1
+			self.mushroomGuardianTick = self.mushroomGuardianTick + 1
 			self.tick = 0
 			local len = #self.bullets+1
 
@@ -73,30 +86,62 @@ function Player:update()
 			self.bullets[len]:add(self.playerX, self.playerY + self.playerSizeY / 2)
 			self.bullets[len]:play()
 
+			-- mushroom guardian
+			if self.mushroomGuardianEnabled and self.mushroomGuardianTick%self.mushroomGuardianThreshold == 0 and self.mushroomsToRespawn > 0 then
+				self.mushroomGuardianTick = 0
+				self.mushroomsToRespawn = self.mushroomsToRespawn - 1
+
+				len = len + 1
+				self.bullets[len] = MushroomGuardian(
+					self.playerX,
+					self.playerY + self.playerSizeY / 2,
+					self.playerVelocityX / self.playerVelocity * 0.5 * self.bulletSpeedModifier,
+					self.playerVelocityY / self.playerVelocity * 0.5 * self.bulletSpeedModifier,
+					false,
+					len,
+					self)
+				self.bullets[len]:add(self.playerX, self.playerY + self.playerSizeY / 2)
+				self.bullets[len]:play()
+
+				if self.mushroomsToRespawn > 0 then
+					self.mushroomsToRespawn = self.mushroomsToRespawn - 1
+					len = len + 1
+					self.bullets[len] = MushroomGuardian(
+						self.playerX,
+						self.playerY + self.playerSizeY / 2,
+						self.playerVelocityX / self.playerVelocity * 0.5 * self.bulletSpeedModifier,
+						self.playerVelocityY / self.playerVelocity * 0.5 * self.bulletSpeedModifier,
+						true,
+						len,
+						self)
+					self.bullets[len]:add(self.playerX, self.playerY + self.playerSizeY / 2)
+					self.bullets[len]:play()
+				end
+			end
+
 			-- cherry bomb
-			if self.cherryBombEnabled and self.subtick%3 == 0 then
-				self.subtick = 0
+			if self.cherryBombEnabled and self.cherryBombTick%self.cherryBombThreshold == 0 then
+				self.cherryBombTick = 0
 
-				math.randomseed(playdate.getSecondsSinceEpoch())
-				local flipped = math.random(2)
-
-				self.bullets[len+1] = CherryBomb(
+				len = len + 1
+				self.bullets[len] = CherryBomb(
 					self.playerX,
 					self.playerY + self.playerSizeY / 2,
 					self.bulletSpeedModifier,
 					true,
-					len+1)
-				self.bullets[len+1]:add(self.playerX, self.playerY + self.playerSizeY / 2)
-				self.bullets[len+1]:play()
+					len)
+				self.bullets[len]:add(self.playerX, self.playerY + self.playerSizeY / 2)
+				self.bullets[len]:play()
 
-				self.bullets[len+2] = CherryBomb(
+				len = len + 1
+				self.bullets[len] = CherryBomb(
 					self.playerX,
 					self.playerY + self.playerSizeY / 2,
 					self.bulletSpeedModifier,
 					false,
-					len+2)
-				self.bullets[len+2]:add(self.playerX, self.playerY + self.playerSizeY / 2)
-				self.bullets[len+2]:play()
+					len)
+				self.bullets[len]:add(self.playerX, self.playerY + self.playerSizeY / 2)
+				self.bullets[len]:play()
 			end
 		end
 	

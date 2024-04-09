@@ -1,3 +1,8 @@
+-- SCORE TRACKER
+-- Handles the updating of the high score
+-- Score tracking is actually mostly handled by the scene (CombatOne.lua), but a lot of that should probably be moved in here.
+-- Updated by scene
+
 ScoreTracker = {}
 class("ScoreTracker").extends(NobleSprite)
 
