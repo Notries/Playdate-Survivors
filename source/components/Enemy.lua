@@ -34,14 +34,14 @@ function Enemy:setValues(__x, __y, __enemySpawnerX, __enemySpawnerY, __enemySpee
     self.enemySizeY = self.getEnemySizeY()
     self.enemyX = __x
     self.enemyY = __y
-    self.enemyVelocity = 0.15 + __enemySpeedIncrease
+    self.enemyVelocity = 0.13 + __enemySpeedIncrease
     self.enemyVelocityX = 0
     self.enemyVelocityY = 5
     self.spawnerX = __enemySpawnerX
     self.spawnerY = __enemySpawnerY
     self.health = __health
     -- collision
-    self:setCollideRect(0, 0, self.enemySizeX, self.enemySizeY)
+    self:setCollideRect(2, 2, self.enemySizeX - 4, self.enemySizeY - 4)
     self.collided = false
     -- upgrade menu variables
     self.upgradeMenuOpened = false
@@ -53,7 +53,7 @@ function Enemy:init(__x, __y, __enemySpawnerX, __enemySpawnerY, __enemySpeedIncr
 end
 
 function Enemy:followPlayer(playerSprite)
-    local speedSquared = self.enemyVelocity * self.enemyVelocity
+    local speedSquared = self.enemyVelocity * self.enemyVelocity * self.health
     local xDifferenceSquared = (playerSprite.playerX - self.enemyX) * (playerSprite.playerX - self.enemyX)
     local yDifferenceSquared = (playerSprite.playerY - self.enemyY) * (playerSprite.playerY - self.enemyY)
     local dxIsPositive = playerSprite.playerX - self.enemyX > 0
@@ -101,6 +101,6 @@ function Enemy:update()
         end
 
         -- collide!
-        self:setCollideRect(0, 0, self.enemySizeX, self.enemySizeY)
+        self:setCollideRect(2, 2, self.enemySizeX - 4, self.enemySizeY - 4)
     end
 end

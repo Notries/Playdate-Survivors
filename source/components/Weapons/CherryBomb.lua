@@ -22,6 +22,7 @@ function CherryBomb:setValues(__x, __y, __velocityModifier, __flipped, __arrayIn
         self.bulletVelocityX = self.bulletVelocityX * -1
     end
     self.bulletVelocityY = -1.5 * __velocityModifier
+    self.destructionThreshold = 125
 end
 
 function CherryBomb:init(__x, __y, __velocityModifier, __flipped, __arrayIndex)

@@ -21,7 +21,7 @@ function Upgrade:setValues(__x, __y)
     self.upgradeY = __y
     self.collected = false
     -- collision
-    self:setCollideRect(0, 0, self.upgradeSizeX, self.upgradeSizeY)
+    self:setCollideRect(-4, -4, self.upgradeSizeX + 8, self.upgradeSizeY + 8)
 
     if self.upgradeX > (400 - self.upgradeSizeX) then
         self.upgradeX = 400 - self.upgradeSizeX

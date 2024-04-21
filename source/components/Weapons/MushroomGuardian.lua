@@ -47,6 +47,7 @@ end
 
 function MushroomGuardian:update()
     MushroomGuardian.super.update(self)
+    self.ticks = 0
 
     if not(self.upgradeMenuOpened) then
         if (self.velocityCapX == 0) then

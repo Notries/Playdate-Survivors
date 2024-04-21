@@ -51,6 +51,13 @@ function UpgradeMenu:setValues(scene)
             effect = function() 
                 self.scene.playerSprite.playerVelocity = self.scene.playerSprite.playerVelocity * 1.5
                 self.scene:closeUpgradeMenu()
+                for i = 1, #self.upgradeTable do
+                    local upgrade = self.upgradeTable[i]
+                    if upgrade.title == "In-fig-orate!" then
+                        table.remove(self.upgradeTable, i)
+                        break
+                    end
+                end
             end,
             disabled = false
         },
@@ -58,7 +65,7 @@ function UpgradeMenu:setValues(scene)
             title = "Durian Fury",
             description = "Increase the\nfire rate of\nall of your\nweapons.",
             effect = function()
-                self.scene.playerSprite.fireRate = self.scene.playerSprite.fireRate * 0.8
+                self.scene.playerSprite.fireRate = self.scene.playerSprite.fireRate * 0.975
                 self.scene:closeUpgradeMenu()
             end,
             disabled = false
@@ -79,25 +86,60 @@ function UpgradeMenu:setValues(scene)
                 self.scene.playerSprite.cherryBombEnabled = true
                 self.scene.playerSprite.cherryBombTick = self.scene.playerSprite.cherryBombThreshold - 1
                 self.scene.playerSprite.tick = self.scene.playerSprite.fireRate
-                table.remove(self.upgradeTable, 4)
+                for i = 1, #self.upgradeTable do
+                    local upgrade = self.upgradeTable[i]
+                    if upgrade.title == "Cherry Bomb" then
+                        table.remove(self.upgradeTable, i)
+                        break
+                    end
+                end
                 self.scene:closeUpgradeMenu()
             end,
             disabled = false
         },
         {
             title = "Mushroom Guardians",
-            description = "Gain two\nmushroom\nguardians that\nregenerate\nafter some\ntime.",
+            description = "Gain two\nmushroom\nguardians that\nfollow you and\nregenerate\nwhen\ndestroyed.",
             effect = function()
                 self.scene.playerSprite.mushroomGuardianEnabled = true
                 self.scene.playerSprite.mushroomsToRespawn = self.scene.playerSprite.mushroomsToRespawn + 2
+                self.scene.playerSprite.totalMushrooms = self.scene.playerSprite.totalMushrooms + 2
                 self.scene.playerSprite.mushroomGuardianTick = self.scene.playerSprite.mushroomGuardianThreshold - 1
                 self.scene.playerSprite.tick = self.scene.playerSprite.fireRate
+                if self.scene.playerSprite.totalMushrooms >= 6 then
+                    for i = 1, #self.upgradeTable do
+                        local upgrade = self.upgradeTable[i]
+                        if upgrade.title == "Mushroom Guardians" then
+                            table.remove(self.upgradeTable, i)
+                            break
+                        end
+                    end
+                end
+                self.scene:closeUpgradeMenu()
+            end,
+            disabled = false
+        },
+        {
+            title = "Banana Boomerang",
+            description = "Throw two\nbananas which\nreturn back to\nyou.",
+            effect = function()
+                self.scene.playerSprite.bananaBoomerangEnabled = true
+                self.scene.playerSprite.bananaBoomerangTick = self.scene.playerSprite.bananaBoomerangThreshold - 1
+                self.scene.playerSprite.tick = self.scene.playerSprite.fireRate
+                for i = 1, #self.upgradeTable do
+                    local upgrade = self.upgradeTable[i]
+                    if upgrade.title == "Banana Boomerang" then
+                        table.remove(self.upgradeTable, i)
+                        break
+                    end
+                end
                 self.scene:closeUpgradeMenu()
             end,
             disabled = false
         }
     }
     self.map = {}
+    self.removed = 0
 end
 
 function UpgradeMenu:init(scene)

@@ -244,6 +244,15 @@ function scene:handleCollisions()
 			else
 				secondSprite.collected = true
 			end
+		elseif((ft == "Player" and st == "Bullet") or (ft == "Bullet" and st == "Player")) then
+			-- print("PLAYER IS OVERLAPPING WITH A BULLET")
+			-- printTable(firstSprite)
+			-- printTable(secondSprite)
+			if (firstSprite.banana) then
+				firstSprite.collided = true
+			elseif (secondSprite.banana) then
+				secondSprite.collided = true
+			end
 		end
 	end
 end
